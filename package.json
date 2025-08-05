@@ -1,0 +1,5 @@
+"scripts": {
+  "start": "node app.js",
+  "test": "echo \"No tests yet\" && exit 0"
+}
+
