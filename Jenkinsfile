@@ -17,28 +17,28 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo 'Installing npm packages...'
-                sh 'npm install'
+                bat 'npm install'
             }
         }
 
         stage('Run Tests') {
             steps {
                 echo 'Running tests...'
-                sh 'npm test'
+                bat 'npm test'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker image...'
-                sh 'docker build -t $DOCKER_HUB_USER/$IMAGE_NAME:latest .'
+                bat 'docker build -t $DOCKER_HUB_USER/$IMAGE_NAME:latest .'
             }
         }
 
         stage('Push to Docker Hub') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh """
+                    bat """
                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                         docker push $DOCKER_HUB_USER/$IMAGE_NAME:latest
                     """
@@ -49,8 +49,8 @@ pipeline {
         stage('Deploy Container') {
             steps {
                 echo 'Deploying Docker container...'
-                sh 'docker rm -f my-running-app || true'
-                sh 'docker run -d -p 3000:3000 --name my-running-app $DOCKER_HUB_USER/$IMAGE_NAME:latest'
+                bat 'docker rm -f my-running-app || true'
+                bat 'docker run -d -p 3000:3000 --name my-running-app $DOCKER_HUB_USER/$IMAGE_NAME:latest'
             }
         }
     }
