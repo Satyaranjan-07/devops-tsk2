@@ -30,11 +30,15 @@ pipeline {
             }
         }
         stage('Push to Docker Hub') {
-            steps {
-                echo 'Pushing Docker image to Docker Hub...'
-                bat "docker login -u %DOCKER_HUB_USER% -p your_password_here"
-                bat "docker push %DOCKER_HUB_USER%/%IMAGE_NAME%:latest"
-            }
+    steps {
+        echo 'Pushing Docker image to Docker Hub...'
+        withCredentials([usernamePassword(credentialsId: 'DOCKER_HUB_CREDS', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+            bat "docker login -u %DOCKER_USER% -p %DOCKER_PASS%"
+            bat "docker push %DOCKER_USER%/%IMAGE_NAME%:latest"
+        }
+    }
+}
+
         }
         stage('Deploy Container') {
             steps {
